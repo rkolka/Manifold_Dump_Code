@@ -1,4 +1,4 @@
-# Dump Code
+# Dump Code - Add-in for Manifold Release 9 
 Manifold Release 9 Add-in 
 Dumps code and DROP/CREATE scripts from Manifold project into textfiles in the same directory as project file.
 
