@@ -1,5 +1,10 @@
 // C#
 // $reference: Newtonsoft.Json.dll
+// $reference: System.Core.dll
+
+//copy "$(TargetDir)$(TargetName).dll" D:\rdn\Bin\manifold-9.0.165.5-x64\shared\Addins\
+//copy "$(TargetDir)Newtonsoft.Json.dll" D:\rdn\Bin\manifold-9.0.165.5-x64\shared\Addins\
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +13,7 @@ using System.Linq;
 using M = Manifold;
 using Newtonsoft.Json;
 
-//copy "$(TargetDir)$(TargetName).dll" D:\rdn\Bin\manifold-9.0.165.5-x64\shared\Addins\
+
 
 class Script
 {
@@ -379,4 +384,10 @@ class Script
         return names;
     }
 
+}
+
+
+public class Connection
+{
+    public string Source { get; set; }
 }

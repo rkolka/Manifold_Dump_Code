@@ -18,7 +18,7 @@ static class Test
             Console.WriteLine(app.Name);
             String mapfile = Path.GetFullPath(@"testmap.map");
             M.Database db = app.CreateDatabaseForFile(mapfile, true);
-            String filedir = Path.GetDirectoryName(mapfile);
+            String filedir = Path.GetDirectoryName(mapfile);  
             String filenamePrefix = Path.GetFileNameWithoutExtension(mapfile);
             Script.DumpDatabaseCode(db, filedir, filenamePrefix);
         }
