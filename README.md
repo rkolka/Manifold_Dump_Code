@@ -7,11 +7,5 @@ Dumps code and DROP/CREATE scripts from Manifold project into textfiles in the s
 * Builds with Visual Studio 2017 (Community Edition)
   - Builds into Dump_Code.dll 
   - Copy Dump_Code.dll under \<manifold\>\shared\\<subdir\>\  
-* Uses Newtonsoft.Json.dll as reference.
-  - this is automatically retrieved if built with VS
-  - Copy Newtonsoft.Json.dll also under \<manifold\>\shared\\<subdir\>\
-  - (I expected more use of this JSON library. Right now it is used only in one place. Should be easy to get rid of this)
   
 * Simply putting Dump_Code.cs into \<manifold\>\shared\ works also
-  - for me gives error if Newtonsoft.Json.dll is under \<manifold\>\shared\\<subdir\>\
-  - works for me if Newtonsoft.Json.dll is in \<manifold\>\bin64\
