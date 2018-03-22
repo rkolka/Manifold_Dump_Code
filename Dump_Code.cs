@@ -239,7 +239,7 @@ class Script
     private static String PropertySubClause(String name, String data)
     {
         //What else should be escaped?
-        String dataEscaped = data.Replace(@"\", @"\\");
+        String dataEscaped = data.Replace(@"\", @"\\").Replace(@"'", @"\'");
         return String.Format("PROPERTY '{0}' '{1}'", name, dataEscaped);
     }
 
