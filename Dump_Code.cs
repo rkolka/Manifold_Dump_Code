@@ -1,9 +1,7 @@
 // C#
-// $reference: Newtonsoft.Json.dll
 // $reference: System.Core.dll
 
 //copy "$(TargetDir)$(TargetName).dll" D:\rdn\Bin\manifold-9.0.165.5-x64\shared\Addins\
-//copy "$(TargetDir)Newtonsoft.Json.dll" D:\rdn\Bin\manifold-9.0.165.5-x64\shared\Addins\
 
 using System;
 using System.Collections.Generic;
@@ -11,7 +9,6 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using M = Manifold;
-using Newtonsoft.Json;
 
 
 
@@ -28,8 +25,9 @@ class Script
         DateTime date = DateTime.Now;
         using (M.Database db = Manifold.Application.GetDatabaseRoot())
         {
-            String filedir = Path.GetDirectoryName(MapFilePath(db.Connection));
-            String filenamePrefix = Path.GetFileNameWithoutExtension(MapFilePath(db.Connection));
+
+            String filedir = Path.GetDirectoryName(MapFilePath(db));
+            String filenamePrefix = Path.GetFileNameWithoutExtension(MapFilePath(db));
             DumpDatabaseCode(db, filedir, filenamePrefix);
             Manifold.Application.Log(String.Format(@"Dumps saved: {0}\{1}.*", filedir, filenamePrefix));
         }
@@ -84,13 +82,19 @@ class Script
                 builderScripts.Append(ReportScript(db, name));
         }
         StringBuilder builder = new StringBuilder();
-        builder.AppendLine("---- Mapfile: " + MapFilePath(db.Connection));
+        builder.AppendLine("---- Mapfile: " + MapFilePath(db));
         builder.Append(builderQueries.ToString());
         builder.Append(builderScripts.ToString());
         return builder.ToString();
 
     }
 
+    private static string MapFilePath(M.Database db)
+    {
+        M.PropertySet dbConnProps = Manifold.Application.CreatePropertySetParse(db.Connection);
+        string path = dbConnProps.GetProperty("Source");
+        return path;
+    }
 
     static String DumpCreateStatements(M.Database db)
     {
@@ -98,7 +102,7 @@ class Script
         List<String> names = Names(db);
 
         StringBuilder builder = new StringBuilder();
-        builder.AppendLine("---- Mapfile: " + MapFilePath(db.Connection));
+        builder.AppendLine("---- Mapfile: " + MapFilePath(db));
 
         // report components
         foreach (String name in names)
@@ -267,20 +271,11 @@ class Script
     }
 
 
-    static String MapFilePath(String json)
-    {
-
-        Connection c = JsonConvert.DeserializeObject<Connection>(json);
-
-        return c.Source;
-    }
-
-
 
     private static string DumpDropStatements(M.Database db)
     {
         StringBuilder builder = new StringBuilder();
-        builder.AppendLine("---- Mapfile: " + MapFilePath(db.Connection));
+        builder.AppendLine("---- Mapfile: " + MapFilePath(db));
         foreach (String name in Names(db))
         {
             String checkFolder = db.GetProperty(name, "Folder");
@@ -302,7 +297,7 @@ class Script
     private static string DumpCleanupStatements(M.Database db)
     {
         StringBuilder builder = new StringBuilder();
-        builder.AppendLine("---- Mapfile: " + MapFilePath(db.Connection));
+        builder.AppendLine("---- Mapfile: " + MapFilePath(db));
         foreach (String name in Names(db))
         {
             String type = db.GetComponentType(name);
@@ -317,7 +312,7 @@ class Script
     private static string DumpCompNames(M.Database db)
     {
         StringBuilder builder = new StringBuilder();
-        builder.AppendLine("---- Mapfile: " + MapFilePath(db.Connection));
+        builder.AppendLine("---- Mapfile: " + MapFilePath(db));
         foreach (String s in CompNames(db))
             builder.AppendLine("-- " + s);
         return builder.ToString();
@@ -386,8 +381,3 @@ class Script
 
 }
 
-
-public class Connection
-{
-    public string Source { get; set; }
-}
