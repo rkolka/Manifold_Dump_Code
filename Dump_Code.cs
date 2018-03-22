@@ -17,19 +17,22 @@ class Script
 
 
     static M.Context Manifold;
+    public static M.Application App;
     private static String Indent = "\t";
 
     static void Main()
     {
-        Manifold.Application.OpenLog();
         DateTime date = DateTime.Now;
-        using (M.Database db = Manifold.Application.GetDatabaseRoot())
+        if (Manifold != null)
+            App = Manifold.Application;
+        App.OpenLog();
+        using (M.Database db = App.GetDatabaseRoot())
         {
 
             String filedir = Path.GetDirectoryName(MapFilePath(db));
             String filenamePrefix = Path.GetFileNameWithoutExtension(MapFilePath(db));
             DumpDatabaseCode(db, filedir, filenamePrefix);
-            Manifold.Application.Log(String.Format(@"Dumps saved: {0}\{1}.*", filedir, filenamePrefix));
+            App.Log(String.Format(@"Dumps saved: {0}\{1}.*", filedir, filenamePrefix));
         }
     }
 
@@ -39,24 +42,24 @@ class Script
 
         filename = String.Format(@"{0}\{1}.components.txt", filedir, filenamePrefix);
         File.WriteAllText(filename, DumpCompNames(db));
-        //Manifold.Application.Log("Component list saved: " + filename);
+        //App.Log("Component list saved: " + filename);
 
         filename = String.Format(@"{0}\{1}.cleanup.sql", filedir, filenamePrefix);
         File.WriteAllText(filename, DumpCleanupStatements(db));
-        //Manifold.Application.Log("Cleanup sql saved: " + filename);
+        //App.Log("Cleanup sql saved: " + filename);
 
         filename = String.Format(@"{0}\{1}.drop.sql", filedir, filenamePrefix);
         File.WriteAllText(filename, DumpDropStatements(db));
-        //Manifold.Application.Log("Drops sql saved: " + filename);
+        //App.Log("Drops sql saved: " + filename);
 
 
         filename = String.Format(@"{0}\{1}.create.sql", filedir, filenamePrefix);
         File.WriteAllText(filename, DumpCreateStatements(db));
-        //Manifold.Application.Log("Create sql saved: " + filename);
+        //App.Log("Create sql saved: " + filename);
 
         filename = String.Format(@"{0}\{1}.code.txt", filedir, filenamePrefix);
         File.WriteAllText(filename, DumpCodeAsText(db));
-        //Manifold.Application.Log("SQL and script text saved: " + filename);
+        //App.Log("SQL and script text saved: " + filename);
     }
 
     private static string DropStatement(String type, String name)
@@ -91,7 +94,7 @@ class Script
 
     private static string MapFilePath(M.Database db)
     {
-        M.PropertySet dbConnProps = Manifold.Application.CreatePropertySetParse(db.Connection);
+        M.PropertySet dbConnProps = App.CreatePropertySetParse(db.Connection);
         string path = dbConnProps.GetProperty("Source");
         return path;
     }

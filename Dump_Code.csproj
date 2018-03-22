@@ -103,8 +103,7 @@
     <VisualStudio AllowExistingFolder="true" />
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetDir)$(TargetName).dll" D:\rdn\Bin\manifold-9.0.165.5-x64\shared\Addins\
-copy "$(TargetDir)Newtonsoft.Json.dll" D:\rdn\Bin\manifold-9.0.165.5-x64\shared\Addins\
-</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>
