@@ -20,7 +20,7 @@ public class Script
 
     static M.Context Manifold;
     public static M.Application App;
-    private static readonly String Indent = "\t";
+    private static readonly String Indent = "  ";
 
     static void Main()
     {

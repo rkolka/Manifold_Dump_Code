@@ -11,12 +11,14 @@
 -- location [Test_Location] 46
 -- map [Map Lat/Lon] 36
 -- map [Map] 11
+-- query [Create_Inventory] 56
 -- query [Test_Query] 12
 -- script [Test_CS] 13
 -- script [Test_IPY] 14
 -- script [Test_JS] 15
 -- table [binghybrid] 38
 -- table [imageserver_cache_binghybrid] 49
+-- table [Inventory] 55
 -- table [map_metacache_1] 48
 -- table [mfd_meta fr-BE] 39
 -- table [mfd_meta] 2

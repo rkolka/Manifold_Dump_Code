@@ -2,6 +2,8 @@
 DROP datasource [Bing Maps Hybrid]; 
 DROP table [binghybrid]; 
 DROP image [binghybrid Image]; 
+DROP query [Create_Inventory]; 
+DROP table [Inventory]; 
 DROP datasource [Link_to_Code]; 
 DROP map [Map]; 
 DROP map [Map Lat/Lon]; 
