@@ -177,7 +177,12 @@ CREATE TABLE [mfd_meta fr-BE] (
 CREATE TABLE [My Components] (
   [mfd_id] INT64,
   [Component Name] VARCHAR,
-  INDEX [mfd_id_x] BTREE ([mfd_id])
+  INDEX [mfd_id_x] BTREE ([mfd_id]),
+  [Ncomp] AS [[ (
+
+    [Component Name] IN (SELECT [Name] FROM [mfd_root])
+
+  ) ]]
 );
 
 
@@ -187,7 +192,10 @@ CREATE TABLE [Prices] (
   [mfd_id] INT64,
   [Cost] INT32,
   [Retail] INT32,
-  INDEX [mfd_id_x] BTREE ([mfd_id])
+  INDEX [mfd_id_x] BTREE ([mfd_id]),
+  [Profitable] AS [[ (
+    [Retail] > [COST]*2
+  ) ]]
 );
 
 

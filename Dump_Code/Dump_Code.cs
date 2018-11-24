@@ -144,7 +144,7 @@ public class Script
 
             itemList.AddRange(FieldSubClauseList(fieldSet));
             itemList.AddRange(IndexSubClauseList(indexSet));
-            //schemaItems.AddRange(ConstraintSubClauseList(constraintSet));
+            itemList.AddRange(ConstraintSubClauseList(constraintSet));
             itemList.AddRange(PropertySubClauseList(propertySet));
         }
         String items = String.Join("," + Environment.NewLine, itemList.Select(i => String.Concat(Indent, i)));
@@ -155,6 +155,25 @@ public class Script
         builder.AppendLine(CreateStatement(typeUpper, name, items));
         builder.AppendLine();
         return builder.ToString();
+    }
+
+    private static List<String> ConstraintSubClauseList(M.Schema.ConstraintSet constraintSet)
+    {
+        List<String> cs = new List<String>();
+        foreach (M.Schema.Constraint c in constraintSet)
+        {
+            cs.Add(ConstraintSubClause(c.Name, "", c.Expression));
+        }
+        return cs;
+    }
+
+    private static String ConstraintSubClause(String name, String context = "", String expression = "")
+    {
+        String ctx = "";
+        if (context.Length > 0)
+            ctx = String.Format(" WITH [[ {0} ]]", context);
+        String c = String.Format("[{0}]{1} AS [[ {2} ]]", name, ctx, expression);
+        return c;
     }
 
 
@@ -217,15 +236,19 @@ public class Script
     {
         List<String> fs = new List<String>();
         foreach (M.Schema.Field f in fieldSet)
-            fs.Add(FieldSubClause(f.Name, f.Type.ToUpper(), f.Expression));
+            fs.Add(FieldSubClause(f.Name, f.Type.ToUpper(), "", f.Expression));
         return fs;
     }
 
-    private static String FieldSubClause(String name, String type, String expression = "")
+    private static String FieldSubClause(String name, String type, String context = "", String expression = "")
     {
-        String f = String.Format("[{0}] {1}", name, type);
+        String ctx = "";
+        String expr = "";
+        if (context.Length > 0)
+            ctx = String.Format(" WITH [[ {0} ]]", context);
         if (expression.Length > 0)
-            f = String.Concat(f, " AS [[ ", expression, " ]]");
+            expr = String.Format(" AS [[ {1} ]]", ctx, expression);
+        String f = String.Format("[{0}] {1}{2}{3}", name, type, ctx, expr);
         return f;
     }
 
