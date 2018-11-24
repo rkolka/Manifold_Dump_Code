@@ -125,12 +125,71 @@ CREATE TABLE [Test Image Table] (
 
 ---- COMMENTS: Test_Comments
 --DROP COMMENTS [Test_Comments];
+CREATE COMMENTS [Test_Comments] (
+	PROPERTY 'Text' 'Ei 
+kommentääri
+43qy&:_E_:%YjE \\3w4y q35y 
+
+
+h54wq h\\w6+ 
+'
+);
+
+
 ---- SCRIPT: Test_CS
 --DROP SCRIPT [Test_CS];
+CREATE SCRIPT [Test_CS] (
+	PROPERTY 'Folder' 'TestFolder\\Folder 2',
+	PROPERTY 'Text' '// C#
+
+class Script
+{
+
+static Manifold.Context Manifold;
+static void Main()
+{
+	Manifold.Application.Log("Hello, World!");
+	Manifold.Application.OpenLog();
+}
+
+}
+',
+	PROPERTY 'Type' 'C#'
+);
+
+
 ---- SCRIPT: Test_IPY
 --DROP SCRIPT [Test_IPY];
+CREATE SCRIPT [Test_IPY] (
+	PROPERTY 'Folder' 'TestFolder',
+	PROPERTY 'Text' '# IronPython
+#
+# Note: running script requires IronPython (IronPython.dll)
+
+def Main():
+	Manifold.Application.Log("Hello, World!")
+	Manifold.Application.OpenLog()
+',
+	PROPERTY 'Type' 'IronPython'
+);
+
+
 ---- SCRIPT: Test_JS
 --DROP SCRIPT [Test_JS];
+CREATE SCRIPT [Test_JS] (
+	PROPERTY 'Folder' 'TestFolder',
+	PROPERTY 'Text' '// JavaScript
+
+var Main = function()
+{
+	Manifold.Application.Log("Hello, World!");
+	Manifold.Application.OpenLog();
+}
+',
+	PROPERTY 'Type' 'JavaScript'
+);
+
+
 ---- LAYOUT: Test_Layout
 --DROP LAYOUT [Test_Layout];
 CREATE LAYOUT [Test_Layout] (
@@ -141,14 +200,26 @@ CREATE LAYOUT [Test_Layout] (
 
 ---- LOCATION: Test_Location
 --DROP LOCATION [Test_Location];
+CREATE LOCATION [Test_Location] (
+	PROPERTY 'Text' '{ "Center": [ -269.56268602944965, 1.2390172697885337e-11 ], "Entity": "[Map Lat\\/Lon]", "Scale": 5672220232.70756 }'
+);
+
+
 ---- QUERY: Test_Query
 --DROP QUERY [Test_Query];
+CREATE QUERY [Test_Query] (
+	PROPERTY 'Text' '-- $manifold$
+
+SELECT * FROM [mfd_root];'
+);
+
+
 ---- TABLE: Test_Table
 --DROP TABLE [Test_Table];
 CREATE TABLE [Test_Table] (
 	[mfd_id] INT64,
 	[geom] GEOM,
-	[mfd_id morethan 5] BOOLEAN AS [mfd_id] > 5,
+	[mfd_id morethan 5] BOOLEAN AS [[ [mfd_id] > 5 ]],
 	INDEX [mfd_id_x] BTREE ([mfd_id]),
 	INDEX [geom_x] RTREE ([geom]),
 	PROPERTY 'FieldCoordSystem.geom' '{ "Axes": "XYH", "Base": "World Geodetic 1984 (WGS84)", "Eccentricity": 0.08181919084262149, "MajorAxis": 6378137, "Name": "Latitude \\/ Longitude", "System": "Latitude \\/ Longitude", "Unit": "Degree", "UnitLatLon": true, "UnitScale": 1, "UnitShort": "deg" }',

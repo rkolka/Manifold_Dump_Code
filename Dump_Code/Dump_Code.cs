@@ -225,7 +225,7 @@ public class Script
     {
         String f = String.Format("[{0}] {1}", name, type);
         if (expression.Length > 0)
-            f = String.Concat(f, " AS ", expression);
+            f = String.Concat(f, " AS [[ ", expression, " ]]");
         return f;
     }
 
