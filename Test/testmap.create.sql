@@ -51,7 +51,62 @@ CREATE QUERY [Create_Inventory] (
   [ExtraStock] INT32
     WITH [[ FUNCTION f(@x INT32) INT32 AS @x+100 END; ]]
     AS [[ f([Stock]) ]],
+  [insertdate] DATETIME
+    WITH [[ SCRIPT funcs ENGINE \'c#\' [[
+  class Script
+  {
+    static System.DateTime F() { return System.DateTime.Now; }
+  }
+]];
+
+FUNCTION currentdate() DATETIME AS SCRIPT INLINE funcs ENTRY \'Script.F\'; ]]
+    AS [[ currentdate() ]],  
+  [insertdate2] DATETIME
+    WITH [[ SCRIPT funcs ENGINE \'c#\' [[
+  class Script
+  {
+    static System.DateTime F(int a) { return System.DateTime.Now; }
+  }
+]];
+
+FUNCTION currentdate(@a INT32) DATETIME AS SCRIPT INLINE funcs ENTRY \'Script.F\'; ]]
+    AS [[ currentdate(1) ]],
   INDEX [mfd_id_x] BTREE ([mfd_id])
+);
+'
+);
+
+
+---- QUERY: Create_My Components
+--DROP QUERY [Create_My Components];
+CREATE QUERY [Create_My Components] (
+  PROPERTY 'Text' 'CREATE TABLE [My Components] (
+  [mfd_id] INT64,
+  [Component Name] VARCHAR,
+  INDEX [mfd_id_x] BTREE ([mfd_id]),
+  CONSTRAINT [Ncomp]
+    AS [[ (
+
+    [Component Name] IN (SELECT [Name] FROM [mfd_root])
+
+  ) ]]
+);
+'
+);
+
+
+---- QUERY: Create_Prices
+--DROP QUERY [Create_Prices];
+CREATE QUERY [Create_Prices] (
+  PROPERTY 'Text' 'CREATE TABLE [Prices] (
+  [mfd_id] INT64,
+  [Cost] INT32,
+  [Retail] INT32,
+  INDEX [mfd_id_x] BTREE ([mfd_id]),
+  CONSTRAINT [Profitable]
+    AS [[ (
+    [Retail] > [COST]*2
+  ) ]]
 );
 '
 );
@@ -63,6 +118,8 @@ CREATE TABLE [Inventory] (
   [mfd_id] INT64,
   [Stock] INT32,
   [ExtraStock] INT32 AS [[ f([Stock]) ]],
+  [insertdate] DATETIME AS [[ currentdate() ]],
+  [insertdate2] DATETIME AS [[ currentdate(1) ]],
   INDEX [mfd_id_x] BTREE ([mfd_id])
 );
 
@@ -112,6 +169,25 @@ CREATE TABLE [mfd_meta fr-BE] (
   PROPERTY 'FieldItem.Name' '{ "Size": 212, "Z": 1 }',
   PROPERTY 'FieldItem.Property' '{ "Size": 96, "Z": 2 }',
   PROPERTY 'FieldItem.Value' '{ "Size": 545, "Z": 3 }'
+);
+
+
+---- TABLE: My Components
+--DROP TABLE [My Components];
+CREATE TABLE [My Components] (
+  [mfd_id] INT64,
+  [Component Name] VARCHAR,
+  INDEX [mfd_id_x] BTREE ([mfd_id])
+);
+
+
+---- TABLE: Prices
+--DROP TABLE [Prices];
+CREATE TABLE [Prices] (
+  [mfd_id] INT64,
+  [Cost] INT32,
+  [Retail] INT32,
+  INDEX [mfd_id_x] BTREE ([mfd_id])
 );
 
 
