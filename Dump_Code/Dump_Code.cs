@@ -1,7 +1,7 @@
 // C#
 // $reference: System.Core.dll
 
-//copy "$(TargetDir)$(TargetName).dll" D:\rdn\Bin\manifold-9.0.165.5-x64\shared\Addins\
+//copy "$(TargetDir)$(TargetName).dll" C:\Path\To\manifold-9\shared\Addins\
 
 using System;
 using System.Collections.Generic;
@@ -12,9 +12,9 @@ using M = Manifold;
 
 
 
-class Script
+public class Script
 {
-
+        
 
     static M.Context Manifold;
     public static M.Application App;
@@ -118,7 +118,7 @@ class Script
                 builder.AppendLine(String.Format("---- {0}: {1}", typeUpper, name));
                 builder.AppendLine(String.Format("--DROP {0} [{1}];", typeUpper, name));
 
-                if (typeUpper == "TABLE" )
+                if (typeUpper == "TABLE")
                 {
                     builder.Append(DumpTableCreate(db, name));
                     builder.AppendLine();
@@ -151,7 +151,7 @@ class Script
             //schemaItems.AddRange(ConstraintSubClauseList(constraintSet));
             itemList.AddRange(PropertySubClauseList(propertySet));
         }
-        String items = String.Join("," + Environment.NewLine, itemList.Select(i => String.Concat(Indent,i)));
+        String items = String.Join("," + Environment.NewLine, itemList.Select(i => String.Concat(Indent, i)));
 
         String typeUpper = db.GetComponentType(name).ToUpper();
 
@@ -233,7 +233,7 @@ class Script
         return f;
     }
 
- 
+
 
 
     private static String PropertySubClause(String name, String data)
@@ -282,10 +282,10 @@ class Script
         {
             String checkFolder = db.GetProperty(name, "Folder");
             if (!checkFolder.StartsWith("System Data"))
-                {
-                    String type = db.GetComponentType(name);
-                    builder.AppendLine(DropStatement(type, name));
-                }
+            {
+                String type = db.GetComponentType(name);
+                builder.AppendLine(DropStatement(type, name));
+            }
         }
         return builder.ToString();
 
@@ -382,4 +382,3 @@ class Script
     }
 
 }
-
