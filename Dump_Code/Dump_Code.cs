@@ -1,7 +1,9 @@
 // C#
 // $reference: System.Core.dll
 
+// Post build events 
 //copy "$(TargetDir)$(TargetName).dll" C:\Path\To\manifold-9\shared\Addins\
+//copy "$(TargetDir)$(TargetName).dll.addin" C:\Path\To\manifold-9\shared\Addins\
 
 using System;
 using System.Collections.Generic;
@@ -18,7 +20,7 @@ public class Script
 
     static M.Context Manifold;
     public static M.Application App;
-    private static String Indent = "\t";
+    private static readonly String Indent = "\t";
 
     static void Main()
     {
@@ -42,24 +44,18 @@ public class Script
 
         filename = String.Format(@"{0}\{1}.components.txt", filedir, filenamePrefix);
         File.WriteAllText(filename, DumpCompNames(db));
-        //App.Log("Component list saved: " + filename);
 
         filename = String.Format(@"{0}\{1}.cleanup.sql", filedir, filenamePrefix);
         File.WriteAllText(filename, DumpCleanupStatements(db));
-        //App.Log("Cleanup sql saved: " + filename);
 
         filename = String.Format(@"{0}\{1}.drop.sql", filedir, filenamePrefix);
         File.WriteAllText(filename, DumpDropStatements(db));
-        //App.Log("Drops sql saved: " + filename);
-
 
         filename = String.Format(@"{0}\{1}.create.sql", filedir, filenamePrefix);
         File.WriteAllText(filename, DumpCreateStatements(db));
-        //App.Log("Create sql saved: " + filename);
 
         filename = String.Format(@"{0}\{1}.code.txt", filedir, filenamePrefix);
         File.WriteAllText(filename, DumpCodeAsText(db));
-        //App.Log("SQL and script text saved: " + filename);
     }
 
     private static string DropStatement(String type, String name)
@@ -124,7 +120,7 @@ public class Script
                     builder.AppendLine();
 
                 }
-                else if (typeUpper == "DATASOURCE" | typeUpper == "MAP" | typeUpper == "DRAWING" | typeUpper == "LABELS" | typeUpper == "LAYOUT" | typeUpper == "IMAGE")
+                else
                 {
                     builder.Append(DumpOtherCreate(db, name));
                     builder.AppendLine();

@@ -72,4 +72,8 @@
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(TargetDir)$(TargetName).dll" C:\progs\Manifold9\manifold-9.0.168.4-x64\shared\Addins\
+copy "$(TargetDir)$(TargetName).dll.addin" C:\progs\Manifold9\manifold-9.0.168.4-x64\shared\Addins\</PostBuildEvent>
+  </PropertyGroup>
 </Project>
