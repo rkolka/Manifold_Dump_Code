@@ -1,0 +1,46 @@
+---- Mapfile: C:\Users\riivo.kolka\Documents\src\Manifold_Dump_Code\Test\testmap.map
+---- query: Test_Query
+
+-- $manifold$
+
+SELECT * FROM [mfd_root];
+
+---- script: Test_CS
+
+// C#
+
+class Script
+{
+
+static Manifold.Context Manifold;
+static void Main()
+{
+	Manifold.Application.Log("Hello, World!");
+	Manifold.Application.OpenLog();
+}
+
+}
+
+
+---- script: Test_IPY
+
+# IronPython
+#
+# Note: running script requires IronPython (IronPython.dll)
+
+def Main():
+	Manifold.Application.Log("Hello, World!")
+	Manifold.Application.OpenLog()
+
+
+---- script: Test_JS
+
+// JavaScript
+
+var Main = function()
+{
+	Manifold.Application.Log("Hello, World!");
+	Manifold.Application.OpenLog();
+}
+
+

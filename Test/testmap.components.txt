@@ -1,0 +1,25 @@
+---- Mapfile: C:\Users\riivo.kolka\Documents\src\Manifold_Dump_Code\Test\testmap.map
+-- comments [Test_Comments] 3
+-- datasource [Bing Maps Hybrid] 33
+-- datasource [Link_to_Code] 16
+-- datasource [Temp_Datasource] 52
+-- drawing [Test_Table Drawing] 7
+-- image [binghybrid Image] 37
+-- image [Test Image] 9
+-- labels [Test_Table Labels] 10
+-- layout [Test_Layout] 17
+-- location [Test_Location] 46
+-- map [Map Lat/Lon] 36
+-- map [Map] 11
+-- query [Test_Query] 12
+-- script [Test_CS] 13
+-- script [Test_IPY] 14
+-- script [Test_JS] 15
+-- table [binghybrid] 38
+-- table [imageserver_cache_binghybrid] 49
+-- table [map_metacache_1] 48
+-- table [mfd_meta fr-BE] 39
+-- table [mfd_meta] 2
+-- table [mfd_root] 1
+-- table [Test Image Table] 8
+-- table [Test_Table] 40
