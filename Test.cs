@@ -11,8 +11,9 @@ static class Test
     [STAThread] // important
     static void Main()
     {
-        String extnet = @"D:\rdn\Bin\manifold-9.0.165.5-x64\bin64\ext.dll";
-        using (M.Root root = new M.Root(extnet))
+        // Path to ext.dll
+        String extdll = @"C:\progs\Manifold9\manifold-9.0.168.4-x64\bin64\ext.dll";
+        using (M.Root root = new M.Root(extdll))
         {
             Script.App = root.Application;
             Console.WriteLine(Script.App.Name);
