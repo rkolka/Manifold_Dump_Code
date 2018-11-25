@@ -165,14 +165,13 @@ public class Script
         return body;
     }
 
-    private static List<string> ConstraintItems(M.Schema.ConstraintSet constraintSet)
+
+    private static List<string> FieldItems(M.Schema.FieldSet fieldSet)
     {
-        List<string> cs = new List<string>();
-        foreach (M.Schema.Constraint c in constraintSet)
-        {
-            cs.Add(ConstraintItem(c.Name, "", c.Expression));
-        }
-        return cs;
+        List<string> fs = new List<string>();
+        foreach (M.Schema.Field f in fieldSet)
+            fs.Add(FieldItem(f.Name, f.Type.ToUpper(), "", f.Expression));
+        return fs;
     }
 
 
@@ -185,6 +184,25 @@ public class Script
             ixs.Add(IndexItem(ix.Name, ix.Type.ToUpper(), fields));
         }
         return ixs;
+    }
+
+    private static List<string> ConstraintItems(M.Schema.ConstraintSet constraintSet)
+    {
+        List<string> cs = new List<string>();
+        foreach (M.Schema.Constraint c in constraintSet)
+        {
+            cs.Add(ConstraintItem(c.Name, "", c.Expression));
+        }
+        return cs;
+    }
+
+
+    private static List<string> PropertyItems(M.PropertySet propSet)
+    {
+        List<string> ps = new List<string>();
+        foreach (M.Property p in propSet)
+            ps.Add(PropertyItem(p.Name, p.Data));
+        return ps;
     }
 
     private static List<string> IndexFieldsList(M.Schema.IndexFieldSet indexFieldSet)
@@ -219,40 +237,6 @@ public class Script
         if (ixf.TileType.Length > 0) optionList.Add(String.Format("TILETYPE {0}", ixf.TileType.ToUpper()));
         return optionList;
     }
-
-    private static List<string> FieldItems(M.Schema.FieldSet fieldSet)
-    {
-        List<string> fs = new List<string>();
-        foreach (M.Schema.Field f in fieldSet)
-            fs.Add(FieldItem(f.Name, f.Type.ToUpper(), "", f.Expression));
-        return fs;
-    }
-
-
-    private static string DumpOtherCreate(M.Database db, string name)
-    {
-        string typeUpper = db.GetComponentType(name).ToUpper();
-
-        M.PropertySet props = db.GetProperties(name);
-        List<string> items = PropertyItems(props);
-        string body = String.Join("," + Environment.NewLine, items.Select(i => String.Concat(Indent, i)));
-
-        StringBuilder builder = new StringBuilder();
-        builder.AppendLine(CreateStatement(name, typeUpper, body));
-        builder.AppendLine();
-        return builder.ToString();
-
-    }
-
-    private static List<string> PropertyItems(M.PropertySet propSet)
-    {
-        List<string> ps = new List<string>();
-        foreach (M.Property p in propSet)
-            ps.Add(PropertyItem(p.Name, p.Data));
-        return ps;
-    }
-
-
 
 
 
