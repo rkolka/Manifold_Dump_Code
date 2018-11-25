@@ -178,7 +178,7 @@ CREATE TABLE [My Components] (
   [mfd_id] INT64,
   [Component Name] VARCHAR,
   INDEX [mfd_id_x] BTREE ([mfd_id]),
-  [Ncomp] AS [[ (
+  CONSTRAINT [Ncomp] AS [[ (
 
     [Component Name] IN (SELECT [Name] FROM [mfd_root])
 
@@ -193,7 +193,7 @@ CREATE TABLE [Prices] (
   [Cost] INT32,
   [Retail] INT32,
   INDEX [mfd_id_x] BTREE ([mfd_id]),
-  [Profitable] AS [[ (
+  CONSTRAINT [Profitable] AS [[ (
     [Retail] > [COST]*2
   ) ]]
 );

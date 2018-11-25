@@ -20,7 +20,7 @@ public class Script
 
     static M.Context Manifold;
     public static M.Application App;
-    private static readonly String Indent = "  ";
+    private static readonly string Indent = "  ";
 
     static void Main()
     {
@@ -31,16 +31,16 @@ public class Script
         using (M.Database db = App.GetDatabaseRoot())
         {
 
-            String filedir = Path.GetDirectoryName(MapFilePath(db));
-            String filenamePrefix = Path.GetFileNameWithoutExtension(MapFilePath(db));
+            string filedir = Path.GetDirectoryName(MapFilePath(db));
+            string filenamePrefix = Path.GetFileNameWithoutExtension(MapFilePath(db));
             DumpDatabaseCode(db, filedir, filenamePrefix);
             App.Log(String.Format(@"Dumps saved: {0}\{1}.*", filedir, filenamePrefix));
         }
     }
 
-    public static void DumpDatabaseCode(M.Database db, String filedir, String filenamePrefix)
+    public static void DumpDatabaseCode(M.Database db, string filedir, string filenamePrefix)
     {
-        String filename;
+        string filename;
 
         filename = String.Format(@"{0}\{1}.components.txt", filedir, filenamePrefix);
         File.WriteAllText(filename, DumpCompNames(db));
@@ -53,40 +53,10 @@ public class Script
 
         filename = String.Format(@"{0}\{1}.create.sql", filedir, filenamePrefix);
         File.WriteAllText(filename, DumpCreateStatements(db));
-
-        filename = String.Format(@"{0}\{1}.code.txt", filedir, filenamePrefix);
-        File.WriteAllText(filename, DumpCodeAsText(db));
-    }
-
-    private static string DropStatement(String type, String name)
-    {
-        return String.Format("DROP {0} [{1}]; ", type, name);
     }
 
 
 
-
-    static String DumpCodeAsText(M.Database db)
-    {
-        List<String> names = Names(db);
-        StringBuilder builderQueries = new StringBuilder();
-        StringBuilder builderScripts = new StringBuilder();
-        foreach (String name in names)
-        {
-            String type = db.GetComponentType(name);
-
-            if (type == "query")
-                builderQueries.Append(ReportQuery(db, name));
-            else if (type == "script")
-                builderScripts.Append(ReportScript(db, name));
-        }
-        StringBuilder builder = new StringBuilder();
-        builder.AppendLine("---- Mapfile: " + MapFilePath(db));
-        builder.Append(builderQueries.ToString());
-        builder.Append(builderScripts.ToString());
-        return builder.ToString();
-
-    }
 
     private static string MapFilePath(M.Database db)
     {
@@ -95,126 +65,149 @@ public class Script
         return path;
     }
 
-    static String DumpCreateStatements(M.Database db)
+    static string DumpCreateStatements(M.Database db)
     {
         // collect component names
-        List<String> names = Names(db);
+        List<string> names = Names(db);
 
         StringBuilder builder = new StringBuilder();
         builder.AppendLine("---- Mapfile: " + MapFilePath(db));
 
         // report components
-        foreach (String name in names)
+        foreach (string name in names)
         {
-            String checkFolder = db.GetProperty(name, "Folder");
+            string checkFolder = db.GetProperty(name, "Folder");
             if (!checkFolder.StartsWith("System Data"))
             {
-                String typeUpper = db.GetComponentType(name).ToUpper();
+                string type = db.GetComponentType(name).ToUpper();
 
-                builder.AppendLine(String.Format("---- {0}: {1}", typeUpper, name));
-                builder.AppendLine(String.Format("--DROP {0} [{1}];", typeUpper, name));
+                builder.AppendLine(String.Format("---- {0}: {1}", type, name));
+                builder.AppendLine(String.Format("--{0}", DropStatement(type, name)));
 
-                if (typeUpper == "TABLE")
-                {
-                    builder.Append(DumpTableCreate(db, name));
-                    builder.AppendLine();
-
-                }
-                else
-                {
-                    builder.Append(DumpOtherCreate(db, name));
-                    builder.AppendLine();
-                }
-
+                string body = CreateStatementBody(db, name);
+                builder.Append(CreateStatement(name, type, body));
+                builder.AppendLine();
+                builder.AppendLine();
+                builder.AppendLine();
             }
         }
         return builder.ToString();
     }
 
-    static String DumpTableCreate(M.Database db, String name)
+    private static string DropStatement(string type, string name)
     {
-        List<String> itemList = new List<string>();
-        using (M.Table table = db.Search(name))
-        {
-            M.Schema schema = table.GetSchema();
-            M.Schema.FieldSet fieldSet = schema.Fields;
-            M.Schema.IndexSet indexSet = schema.Indexes;
-            M.Schema.ConstraintSet constraintSet = schema.Constraints;
-            M.PropertySet propertySet = db.GetProperties(name);
-
-            itemList.AddRange(FieldSubClauseList(fieldSet));
-            itemList.AddRange(IndexSubClauseList(indexSet));
-            itemList.AddRange(ConstraintSubClauseList(constraintSet));
-            itemList.AddRange(PropertySubClauseList(propertySet));
-        }
-        String items = String.Join("," + Environment.NewLine, itemList.Select(i => String.Concat(Indent, i)));
-
-        String typeUpper = db.GetComponentType(name).ToUpper();
-
-        StringBuilder builder = new StringBuilder();
-        builder.AppendLine(CreateStatement(typeUpper, name, items));
-        builder.AppendLine();
-        return builder.ToString();
+        return String.Format("DROP {0} [{1}];", type, name);
     }
 
-    private static List<String> ConstraintSubClauseList(M.Schema.ConstraintSet constraintSet)
+    private static string CleanupStatement(string name)
     {
-        List<String> cs = new List<String>();
-        foreach (M.Schema.Constraint c in constraintSet)
-        {
-            cs.Add(ConstraintSubClause(c.Name, "", c.Expression));
-        }
-        return cs;
+        return String.Format("DELETE FROM [{0}]; ", name);
     }
 
-    private static String ConstraintSubClause(String name, String context = "", String expression = "")
+    private static string CreateStatement(string name, string type, string body)
     {
-        String ctx = "";
+        return String.Format("CREATE {1} [{0}] ({3}{2}{3});", name, type, body, Environment.NewLine);
+    }
+
+    private static string FieldItem(string name, string type, string context = "", string expression = "")
+    {
         if (context.Length > 0)
-            ctx = String.Format(" WITH [[ {0} ]]", context);
-        String c = String.Format("[{0}]{1} AS [[ {2} ]]", name, ctx, expression);
+            context = string.Format(" WITH [[ {0} ]]", context);
+        if (expression.Length > 0)
+            expression = string.Format(" AS [[ {0} ]]", expression);
+        string f = string.Format("[{0}] {1}{2}{3}", name, type, context, expression);
+        return f;
+    }
+
+    private static string IndexItem(string name, string type, string fields)
+    {
+        string ix = String.Format("INDEX [{0}] {1} ({2})", name, type, fields);
+        return ix;
+    }
+
+    private static string ConstraintItem(string name, string context, string expression)
+    {
+        if (context.Length > 0)
+            context = String.Format(" WITH [[ {0} ]]", context);
+        string c = String.Format("CONSTRAINT [{0}]{1} AS [[ {2} ]]", name, context, expression);
         return c;
     }
 
 
-    private static List<String> IndexSubClauseList(M.Schema.IndexSet indexSet)
+    private static String PropertyItem(string name, string data)
     {
-        List<String> ixs = new List<String>();
+        string dataEscaped = data.Replace(@"\", @"\\").Replace(@"'", @"\'");
+        return String.Format("PROPERTY '{0}' '{1}'", name, dataEscaped);
+    }
+
+    static string CreateStatementBody(M.Database db, string name)
+    {
+        List<string> items = new List<string>();
+
+        string type = db.GetComponentType(name).ToUpper();
+
+        if (type == "TABLE")
+        {
+            using (M.Table table = db.Search(name))
+            {
+                M.Schema schema = table.GetSchema();
+
+                items.AddRange(FieldItems(schema.Fields));
+                items.AddRange(IndexItems(schema.Indexes));
+                items.AddRange(ConstraintItems(schema.Constraints));
+            }
+        }
+
+        M.PropertySet propertySet = db.GetProperties(name);
+        items.AddRange(PropertyItems(propertySet));
+        
+        string body = String.Join("," + Environment.NewLine, items.Select(i => String.Concat(Indent, i)));
+        return body;
+    }
+
+    private static List<string> ConstraintItems(M.Schema.ConstraintSet constraintSet)
+    {
+        List<string> cs = new List<string>();
+        foreach (M.Schema.Constraint c in constraintSet)
+        {
+            cs.Add(ConstraintItem(c.Name, "", c.Expression));
+        }
+        return cs;
+    }
+
+
+    private static List<string> IndexItems(M.Schema.IndexSet indexSet)
+    {
+        List<string> ixs = new List<string>();
         foreach (M.Schema.Index ix in indexSet)
         {
-            String fields = String.Join(", ", IndexFieldsList(ix.Fields));
-            ixs.Add(IndexSubClause(ix.Name, ix.Type.ToUpper(), fields));
+            string fields = String.Join(", ", IndexFieldsList(ix.Fields));
+            ixs.Add(IndexItem(ix.Name, ix.Type.ToUpper(), fields));
         }
         return ixs;
     }
 
-    private static List<String> IndexFieldsList(M.Schema.IndexFieldSet indexFieldSet)
+    private static List<string> IndexFieldsList(M.Schema.IndexFieldSet indexFieldSet)
     {
-        List<String> ixfs = new List<String>();
+        List<string> ixfs = new List<string>();
         foreach (M.Schema.IndexField ixf in indexFieldSet)
         {
-            String options = String.Join(" ", IndexFieldOptionsList(ixf));
+            string options = String.Join(" ", IndexFieldOptionsList(ixf));
             ixfs.Add(IndexFieldSubClause(ixf.Name, options));
         }
         return ixfs;
     }
-    private static String IndexSubClause(String name, String type, String fields)
-    {
-        String ix = String.Format("INDEX [{0}] {1} ({2})", name, type, fields);
-        return ix;
-    }
 
-    private static String IndexFieldSubClause(String name, String options)
+
+    private static string IndexFieldSubClause(string name, string options)
     {
-        String ixf = String.Format("[{0}]", name);
-        if (options.Length > 0)
-            ixf = String.Concat(ixf, " ", options);
+        string ixf = String.Format("[{0}] {1}", name, options).Trim(' ');
         return ixf;
     }
 
-    private static List<String> IndexFieldOptionsList(M.Schema.IndexField ixf)
+    private static List<string> IndexFieldOptionsList(M.Schema.IndexField ixf)
     {
-        List<String> optionList = new List<String>();
+        List<string> optionList = new List<string>();
         if (ixf.Collation.Length > 0) optionList.Add(String.Format("COLLATE '{0}'", ixf.Collation));
         if (ixf.IgnoreCase) optionList.Add("NOCASE");
         if (ixf.IgnoreAccent) optionList.Add("NOACCENT");
@@ -227,69 +220,39 @@ public class Script
         return optionList;
     }
 
-
-
-
-
-
-    private static List<String> FieldSubClauseList(M.Schema.FieldSet fieldSet)
+    private static List<string> FieldItems(M.Schema.FieldSet fieldSet)
     {
-        List<String> fs = new List<String>();
+        List<string> fs = new List<string>();
         foreach (M.Schema.Field f in fieldSet)
-            fs.Add(FieldSubClause(f.Name, f.Type.ToUpper(), "", f.Expression));
+            fs.Add(FieldItem(f.Name, f.Type.ToUpper(), "", f.Expression));
         return fs;
     }
 
-    private static String FieldSubClause(String name, String type, String context = "", String expression = "")
+
+    private static string DumpOtherCreate(M.Database db, string name)
     {
-        String ctx = "";
-        String expr = "";
-        if (context.Length > 0)
-            ctx = String.Format(" WITH [[ {0} ]]", context);
-        if (expression.Length > 0)
-            expr = String.Format(" AS [[ {1} ]]", ctx, expression);
-        String f = String.Format("[{0}] {1}{2}{3}", name, type, ctx, expr);
-        return f;
-    }
-
-
-
-
-    private static String PropertySubClause(String name, String data)
-    {
-        String dataEscaped = data.Replace(@"\", @"\\").Replace(@"'", @"\'");
-        return String.Format("PROPERTY '{0}' '{1}'", name, dataEscaped);
-    }
-
-    private static List<String> PropertySubClauseList(M.PropertySet propSet)
-    {
-        List<String> ps = new List<String>();
-        foreach (M.Property p in propSet)
-            ps.Add(PropertySubClause(p.Name, p.Data));
-        return ps;
-    }
-
-    private static String CreateStatement(String type, String name, String items)
-    {
-        return String.Format("CREATE {1} [{2}] ({0}{3}{0});", Environment.NewLine, type, name, items);
-    }
-
-
-
-    private static String DumpOtherCreate(M.Database db, string name)
-    {
-        String typeUpper = db.GetComponentType(name).ToUpper();
+        string typeUpper = db.GetComponentType(name).ToUpper();
 
         M.PropertySet props = db.GetProperties(name);
-        List<String> itemsList = PropertySubClauseList(props);
-        String itemsText = String.Join("," + Environment.NewLine, itemsList.Select(i => String.Concat(Indent, i)));
+        List<string> items = PropertyItems(props);
+        string body = String.Join("," + Environment.NewLine, items.Select(i => String.Concat(Indent, i)));
 
         StringBuilder builder = new StringBuilder();
-        builder.AppendLine(CreateStatement(typeUpper, name, itemsText));
+        builder.AppendLine(CreateStatement(name, typeUpper, body));
         builder.AppendLine();
         return builder.ToString();
 
     }
+
+    private static List<string> PropertyItems(M.PropertySet propSet)
+    {
+        List<string> ps = new List<string>();
+        foreach (M.Property p in propSet)
+            ps.Add(PropertyItem(p.Name, p.Data));
+        return ps;
+    }
+
+
 
 
 
@@ -297,12 +260,12 @@ public class Script
     {
         StringBuilder builder = new StringBuilder();
         builder.AppendLine("---- Mapfile: " + MapFilePath(db));
-        foreach (String name in Names(db))
+        foreach (string name in Names(db))
         {
-            String checkFolder = db.GetProperty(name, "Folder");
+            string checkFolder = db.GetProperty(name, "Folder");
             if (!checkFolder.StartsWith("System Data"))
             {
-                String type = db.GetComponentType(name);
+                string type = db.GetComponentType(name).ToUpper();
                 builder.AppendLine(DropStatement(type, name));
             }
         }
@@ -310,31 +273,28 @@ public class Script
 
     }
 
-    private static string CleanupStatement(String name)
-    {
-        return String.Format("DELETE FROM [{0}]; ", name);
-    }
+
 
     private static string DumpCleanupStatements(M.Database db)
     {
         StringBuilder builder = new StringBuilder();
         builder.AppendLine("---- Mapfile: " + MapFilePath(db));
-        foreach (String name in Names(db))
+        foreach (string name in Names(db))
         {
-            String type = db.GetComponentType(name);
-            String checkFolder = db.GetProperty(name, "Folder");
+            string type = db.GetComponentType(name);
+            string checkFolder = db.GetProperty(name, "Folder");
             if (!checkFolder.StartsWith("System Data") & type == "table")
                 builder.AppendLine(CleanupStatement(name));
         }
         return builder.ToString();
-
     }
+
 
     private static string DumpCompNames(M.Database db)
     {
         StringBuilder builder = new StringBuilder();
         builder.AppendLine("---- Mapfile: " + MapFilePath(db));
-        foreach (String s in CompNames(db))
+        foreach (string s in CompNames(db))
             builder.AppendLine("-- " + s);
         return builder.ToString();
 
@@ -342,34 +302,12 @@ public class Script
 
 
 
-    static String ReportQuery(M.Database db, String name)
+    static List<string> Names(M.Database db)
     {
-        StringBuilder builder = new StringBuilder();
-        builder.AppendLine("---- query: " + name);
-        builder.AppendLine();
-        builder.AppendLine(db.GetProperty(name, "text"));
-        builder.AppendLine();
-        return builder.ToString();
-    }
-
-    static String ReportScript(M.Database db, String name)
-    {
-        StringBuilder builder = new StringBuilder();
-        builder.AppendLine("---- script: " + name);
-        builder.AppendLine();
-        builder.AppendLine(db.GetProperty(name, "text"));
-        builder.AppendLine();
-        return builder.ToString();
-    }
-
-
-
-    static List<String> Names(M.Database db)
-    {
-        List<String> names = new List<String>();
+        List<string> names = new List<string>();
         using (M.Table root = db.Search("mfd_root"))
         {
-            using (M.Sequence sequence = root.SearchAll(new String[] { "name" }))
+            using (M.Sequence sequence = root.SearchAll(new string[] { "name" }))
             {
                 while (sequence.Fetch())
                     names.Add(sequence.GetValues()[0].Data.ToString());
@@ -379,12 +317,12 @@ public class Script
         return names;
     }
 
-    static List<String> CompNames(M.Database db)
+    static List<string> CompNames(M.Database db)
     {
-        List<String> names = new List<String>();
-        using (M.Table root = db.Search("mfd_root"))
+        var names = new List<string>();
+        using (M.Table t = db.Search("mfd_root"))
         {
-            using (M.Sequence sequence = root.SearchAll(new String[] { "mfd_id", "type", "name" }))
+            using (M.Sequence sequence = t.SearchAll(new string[] { "mfd_id", "type", "name" }))
             {
                 while (sequence.Fetch())
                 {
