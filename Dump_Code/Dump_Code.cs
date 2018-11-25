@@ -180,7 +180,7 @@ public class Script
         List<string> ixs = new List<string>();
         foreach (M.Schema.Index ix in indexSet)
         {
-            string fields = String.Join(", ", IndexFieldsList(ix.Fields));
+            string fields = String.Join(", ", IndexFields(ix.Fields));
             ixs.Add(IndexItem(ix.Name, ix.Type.ToUpper(), fields));
         }
         return ixs;
@@ -205,12 +205,12 @@ public class Script
         return ps;
     }
 
-    private static List<string> IndexFieldsList(M.Schema.IndexFieldSet indexFieldSet)
+    private static List<string> IndexFields(M.Schema.IndexFieldSet indexFieldSet)
     {
         List<string> ixfs = new List<string>();
         foreach (M.Schema.IndexField ixf in indexFieldSet)
         {
-            string options = String.Join(" ", IndexFieldOptionsList(ixf));
+            string options = String.Join(" ", IndexFieldOptions(ixf));
             ixfs.Add(IndexFieldSubClause(ixf.Name, options));
         }
         return ixfs;
@@ -223,19 +223,19 @@ public class Script
         return ixf;
     }
 
-    private static List<string> IndexFieldOptionsList(M.Schema.IndexField ixf)
+    private static List<string> IndexFieldOptions(M.Schema.IndexField ixf)
     {
-        List<string> optionList = new List<string>();
-        if (ixf.Collation.Length > 0) optionList.Add(String.Format("COLLATE '{0}'", ixf.Collation));
-        if (ixf.IgnoreCase) optionList.Add("NOCASE");
-        if (ixf.IgnoreAccent) optionList.Add("NOACCENT");
-        if (ixf.IgnoreSymbols) optionList.Add("NOSYMBOLS");
-        if (ixf.Descending) optionList.Add("DESC");
+        List<string> options = new List<string>();
+        if (ixf.Collation.Length > 0) options.Add(String.Format("COLLATE '{0}'", ixf.Collation));
+        if (ixf.IgnoreCase) options.Add("NOCASE");
+        if (ixf.IgnoreAccent) options.Add("NOACCENT");
+        if (ixf.IgnoreSymbols) options.Add("NOSYMBOLS");
+        if (ixf.Descending) options.Add("DESC");
 
-        if (ixf.TileReduce.Length > 0) optionList.Add(String.Format("TILEREDUCE '{0}'", ixf.TileReduce.ToUpper()));
-        if (ixf.TileSize.Length > 0) optionList.Add(String.Format("TILESIZE ({0})", ixf.TileSize));
-        if (ixf.TileType.Length > 0) optionList.Add(String.Format("TILETYPE {0}", ixf.TileType.ToUpper()));
-        return optionList;
+        if (ixf.TileReduce.Length > 0) options.Add(String.Format("TILEREDUCE '{0}'", ixf.TileReduce.ToUpper()));
+        if (ixf.TileSize.Length > 0) options.Add(String.Format("TILESIZE ({0})", ixf.TileSize));
+        if (ixf.TileType.Length > 0) options.Add(String.Format("TILETYPE {0}", ixf.TileType.ToUpper()));
+        return options;
     }
 
 
