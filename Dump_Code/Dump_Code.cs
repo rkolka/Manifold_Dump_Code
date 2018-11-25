@@ -55,10 +55,7 @@ public class Script
         File.WriteAllText(filename, DumpCreateStatements(db));
     }
 
-
-
-
-    private static string MapFilePath(M.Database db)
+    static string MapFilePath(M.Database db)
     {
         M.PropertySet dbConnProps = App.CreatePropertySetParse(db.Connection);
         string path = dbConnProps.GetProperty("Source");
@@ -94,22 +91,22 @@ public class Script
         return builder.ToString();
     }
 
-    private static string DropStatement(string type, string name)
+    static string DropStatement(string type, string name)
     {
         return String.Format("DROP {0} [{1}];", type, name);
     }
 
-    private static string CleanupStatement(string name)
+    static string CleanupStatement(string name)
     {
         return String.Format("DELETE FROM [{0}]; ", name);
     }
 
-    private static string CreateStatement(string name, string type, string body)
+    static string CreateStatement(string name, string type, string body)
     {
         return String.Format("CREATE {1} [{0}] ({3}{2}{3});", name, type, body, Environment.NewLine);
     }
 
-    private static string FieldItem(string name, string type, string context = "", string expression = "")
+    static string FieldItem(string name, string type, string context = "", string expression = "")
     {
         if (context.Length > 0)
             context = string.Format(" WITH [[ {0} ]]", context);
@@ -119,13 +116,13 @@ public class Script
         return f;
     }
 
-    private static string IndexItem(string name, string type, string fields)
+    static string IndexItem(string name, string type, string fields)
     {
         string ix = String.Format("INDEX [{0}] {1} ({2})", name, type, fields);
         return ix;
     }
 
-    private static string ConstraintItem(string name, string context, string expression)
+    static string ConstraintItem(string name, string context, string expression)
     {
         if (context.Length > 0)
             context = String.Format(" WITH [[ {0} ]]", context);
@@ -133,8 +130,7 @@ public class Script
         return c;
     }
 
-
-    private static String PropertyItem(string name, string data)
+    static string PropertyItem(string name, string data)
     {
         string dataEscaped = data.Replace(@"\", @"\\").Replace(@"'", @"\'");
         return String.Format("PROPERTY '{0}' '{1}'", name, dataEscaped);
@@ -165,7 +161,6 @@ public class Script
         return body;
     }
 
-
     private static List<string> FieldItems(M.Schema.FieldSet fieldSet)
     {
         List<string> fs = new List<string>();
@@ -173,7 +168,6 @@ public class Script
             fs.Add(FieldItem(f.Name, f.Type.ToUpper(), "", f.Expression));
         return fs;
     }
-
 
     private static List<string> IndexItems(M.Schema.IndexSet indexSet)
     {
@@ -196,7 +190,6 @@ public class Script
         return cs;
     }
 
-
     private static List<string> PropertyItems(M.PropertySet propSet)
     {
         List<string> ps = new List<string>();
@@ -216,8 +209,7 @@ public class Script
         return ixfs;
     }
 
-
-    private static string IndexFieldSubClause(string name, string options)
+    static string IndexFieldSubClause(string name, string options)
     {
         string ixf = String.Format("[{0}] {1}", name, options).Trim(' ');
         return ixf;
@@ -238,9 +230,7 @@ public class Script
         return options;
     }
 
-
-
-    private static string DumpDropStatements(M.Database db)
+    static string DumpDropStatements(M.Database db)
     {
         StringBuilder builder = new StringBuilder();
         builder.AppendLine("---- Mapfile: " + MapFilePath(db));
@@ -257,9 +247,7 @@ public class Script
 
     }
 
-
-
-    private static string DumpCleanupStatements(M.Database db)
+    static string DumpCleanupStatements(M.Database db)
     {
         StringBuilder builder = new StringBuilder();
         builder.AppendLine("---- Mapfile: " + MapFilePath(db));
@@ -273,8 +261,7 @@ public class Script
         return builder.ToString();
     }
 
-
-    private static string DumpCompNames(M.Database db)
+    static string DumpCompNames(M.Database db)
     {
         StringBuilder builder = new StringBuilder();
         builder.AppendLine("---- Mapfile: " + MapFilePath(db));
@@ -283,8 +270,6 @@ public class Script
         return builder.ToString();
 
     }
-
-
 
     static List<string> Names(M.Database db)
     {
@@ -321,5 +306,4 @@ public class Script
         names.Sort();
         return names;
     }
-
 }
