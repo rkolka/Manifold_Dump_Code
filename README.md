@@ -6,6 +6,7 @@ Dumps code and DROP/CREATE scripts from Manifold project into textfiles in the s
 * Adapted from http://www.georeference.org/forum/t142430.22#142437
 * Builds with Visual Studio 2017 (Community Edition)
   - Builds into Dump_Code.dll 
-  - Copy Dump_Code.dll under \<manifold\>\shared\\<subdir\>\  
+  - Copy Dump_Code.dll and Dump_Code.dll.addin under \<manifold\>\shared\\<subdir\>\  
   
 * Simply putting Dump_Code.cs into \<manifold\>\shared\ works also
+* Test directory has sample output.
