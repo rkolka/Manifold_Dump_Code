@@ -1,4 +1,4 @@
----- Mapfile: C:\Users\riivo.kolka\Documents\src\Manifold_Dump_Code\Test\testmap.map
+---- Mapfile: testmap.map
 -- comments [Test_Comments] 3
 -- datasource [Bing Maps Hybrid] 33
 -- datasource [Link_to_Code] 16

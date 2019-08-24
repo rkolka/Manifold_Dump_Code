@@ -1,4 +1,4 @@
----- Mapfile: C:\Users\riivo.kolka\Documents\src\Manifold_Dump_Code\Test\testmap.map
+---- Mapfile: testmap.map
 DELETE FROM [binghybrid]; 
 DELETE FROM [Inventory]; 
 DELETE FROM [mfd_meta fr-BE]; 

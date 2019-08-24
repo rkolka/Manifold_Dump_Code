@@ -1,4 +1,4 @@
----- Mapfile: C:\Users\riivo.kolka\Documents\src\Manifold_Dump_Code\Test\testmap.map
+---- Mapfile: testmap.map
 ---- DATASOURCE: Bing Maps Hybrid
 --DROP DATASOURCE [Bing Maps Hybrid];
 CREATE DATASOURCE [Bing Maps Hybrid] (
@@ -117,9 +117,23 @@ CREATE QUERY [Create_Prices] (
 CREATE TABLE [Inventory] (
   [mfd_id] INT64,
   [Stock] INT32,
-  [ExtraStock] INT32 AS [[ f([Stock]) ]],
-  [insertdate] DATETIME AS [[ currentdate() ]],
-  [insertdate2] DATETIME AS [[ currentdate(1) ]],
+  [ExtraStock] INT32 WITH [[ FUNCTION f(@x INT32) INT32 AS @x+100 END; ]] AS [[ f([Stock]) ]],
+  [insertdate] DATETIME WITH [[ SCRIPT funcs ENGINE 'c#' [[
+  class Script
+  {
+    static System.DateTime F() { return System.DateTime.Now; }
+  }
+]];
+
+FUNCTION currentdate() DATETIME AS SCRIPT INLINE funcs ENTRY 'Script.F'; ]] AS [[ currentdate() ]],
+  [insertdate2] DATETIME WITH [[ SCRIPT funcs ENGINE 'c#' [[
+  class Script
+  {
+    static System.DateTime F(int a) { return System.DateTime.Now; }
+  }
+]];
+
+FUNCTION currentdate(@a INT32) DATETIME AS SCRIPT INLINE funcs ENTRY 'Script.F'; ]] AS [[ currentdate(1) ]],
   INDEX [mfd_id_x] BTREE ([mfd_id])
 );
 

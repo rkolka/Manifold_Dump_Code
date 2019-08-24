@@ -1,4 +1,4 @@
----- Mapfile: C:\Users\riivo.kolka\Documents\src\Manifold_Dump_Code\Test\testmap.map
+---- Mapfile: testmap.map
 DROP DATASOURCE [Bing Maps Hybrid];
 DROP TABLE [binghybrid];
 DROP IMAGE [binghybrid Image];

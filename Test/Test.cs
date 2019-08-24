@@ -12,7 +12,9 @@ static class Test
     static void Main()
     {
         // Path to ext.dll
-        String extdll = @"C:\progs\Manifold9\manifold-9.0.168.4-x64\bin64\ext.dll";
+        // If path is an empty string, the object will try to use EXT.DLL 
+        // in the default installation path C:\Program Files\Manifold\v9.0\Bin64
+        String extdll = @"";  
         using (M.Root root = new M.Root(extdll))
         {
             Script.App = root.Application;
