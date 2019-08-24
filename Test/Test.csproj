@@ -57,7 +57,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="extnet">
-      <HintPath>..\..\..\..\..\..\progs\Manifold9\manifold-9.0.168.4-x64\bin64\extnet.dll</HintPath>
+      <HintPath>C:\Program Files\Manifold\v9.0\bin64\extnet.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
