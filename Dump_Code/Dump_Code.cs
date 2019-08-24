@@ -1,9 +1,10 @@
 // C#
 // $reference: System.Core.dll
 
-// Post build events 
-//copy "$(TargetDir)$(TargetName).dll" C:\Path\To\manifold-9\shared\Addins\
-//copy "$(TargetDir)$(TargetName).dll.addin" C:\Path\To\manifold-9\shared\Addins\
+// In Debug mode 
+// * Builds into C:\Program Files\Manifold\v9.0\shared\Dump_Code\ 
+// * Starts C:\Program Files\Manifold\v9.0\bin64\manifold.exe
+// * Can use breakpoints
 
 using System;
 using System.Collections.Generic;
@@ -165,7 +166,7 @@ public class Script
     {
         List<string> fs = new List<string>();
         foreach (M.Schema.Field f in fieldSet)
-            fs.Add(FieldItem(f.Name, f.Type.ToUpper(), "", f.Expression));
+            fs.Add(FieldItem(f.Name, f.Type.ToUpper(), f.ExpressionContext, f.Expression));
         return fs;
     }
 
@@ -185,7 +186,7 @@ public class Script
         List<string> cs = new List<string>();
         foreach (M.Schema.Constraint c in constraintSet)
         {
-            cs.Add(ConstraintItem(c.Name, "", c.Expression));
+            cs.Add(ConstraintItem(c.Name, c.ExpressionContext, c.Expression));
         }
         return cs;
     }
