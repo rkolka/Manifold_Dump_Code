@@ -2,9 +2,9 @@
 // $reference: System.Core.dll
 
 // In Debug mode 
-// * Builds into C:\Program Files\Manifold\v9.0\shared\Dump_Code\ 
+// * Builds into C:\Program Files\Manifold\v9.0\shared\Debug\Dump_Code\ 
 // * Starts C:\Program Files\Manifold\v9.0\bin64\manifold.exe
-// * Can use breakpoints
+// * Breakpoints can be used
 
 using System;
 using System.Collections.Generic;
