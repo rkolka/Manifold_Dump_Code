@@ -44,16 +44,16 @@ public class Script
         string filename;
 
         filename = String.Format(@"{0}\{1}.components.txt", filedir, filenamePrefix);
-        File.WriteAllText(filename, DumpCompNames(db));
+        File.WriteAllText(filename, DumpCompNames(db), Encoding.UTF8);
 
         filename = String.Format(@"{0}\{1}.cleanup.sql", filedir, filenamePrefix);
-        File.WriteAllText(filename, DumpCleanupStatements(db));
+        File.WriteAllText(filename, DumpCleanupStatements(db), Encoding.UTF8);
 
         filename = String.Format(@"{0}\{1}.drop.sql", filedir, filenamePrefix);
-        File.WriteAllText(filename, DumpDropStatements(db));
+        File.WriteAllText(filename, DumpDropStatements(db), Encoding.UTF8);
 
         filename = String.Format(@"{0}\{1}.create.sql", filedir, filenamePrefix);
-        File.WriteAllText(filename, DumpCreateStatements(db));
+        File.WriteAllText(filename, DumpCreateStatements(db), Encoding.UTF8);
     }
 
     static string MapFilePath(M.Database db)
