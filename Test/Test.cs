@@ -13,7 +13,7 @@ static class Test
     {
         // Path to ext.dll
         // If path is an empty string, the object will try to use EXT.DLL 
-        // in the default installation path C:\Program Files\Manifold\v9.0\Bin64
+        // in the default installation path C:\Program Files\Manifold\v9.0
         String extdll = @"";  
         using (M.Root root = new M.Root(extdll))
         {

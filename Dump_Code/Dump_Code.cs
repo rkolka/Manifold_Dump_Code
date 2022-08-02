@@ -2,7 +2,7 @@
 // $reference: System.Core.dll
 
 // In Debug mode 
-// * Builds into C:\Program Files\Manifold\v9.0\shared\Debug\Dump_Code\ 
+// * Builds into C:\Program Files\Manifold\v9.0\extras\Debug\Dump_Code\ 
 // * Starts C:\Program Files\Manifold\v9.0\bin64\manifold.exe
 // * Breakpoints can be used
 
