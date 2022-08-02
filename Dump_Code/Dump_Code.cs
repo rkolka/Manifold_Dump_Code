@@ -71,11 +71,13 @@ public class Script
         StringBuilder builder = new StringBuilder();
         builder.AppendLine("---- Mapfile: " + MapFilePath(db));
 
+        string systemFolder = db.GetProperty("mfd_meta", "Folder");
+
         // report components
         foreach (string name in names)
         {
             string checkFolder = db.GetProperty(name, "Folder");
-            if (!checkFolder.StartsWith("System Data"))
+            if (!checkFolder.Equals(systemFolder))
             {
                 string type = db.GetComponentType(name).ToUpper();
 
@@ -235,10 +237,13 @@ public class Script
     {
         StringBuilder builder = new StringBuilder();
         builder.AppendLine("---- Mapfile: " + MapFilePath(db));
+
+        string systemFolder = db.GetProperty("mfd_meta", "Folder");
+
         foreach (string name in Names(db))
         {
             string checkFolder = db.GetProperty(name, "Folder");
-            if (!checkFolder.StartsWith("System Data"))
+            if (!checkFolder.Equals(systemFolder))
             {
                 string type = db.GetComponentType(name).ToUpper();
                 builder.AppendLine(DropStatement(type, name));
@@ -252,11 +257,14 @@ public class Script
     {
         StringBuilder builder = new StringBuilder();
         builder.AppendLine("---- Mapfile: " + MapFilePath(db));
+        
+        string systemFolder = db.GetProperty("mfd_meta", "Folder");
+
         foreach (string name in Names(db))
         {
             string type = db.GetComponentType(name);
             string checkFolder = db.GetProperty(name, "Folder");
-            if (!checkFolder.StartsWith("System Data") & type == "table")
+            if (!checkFolder.Equals(systemFolder) & type == "table")
                 builder.AppendLine(CleanupStatement(name));
         }
         return builder.ToString();
