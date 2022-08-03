@@ -3,7 +3,7 @@
 
 // In Debug mode 
 // * Builds into C:\Program Files\Manifold\v9.0\extras\Debug\Dump_Code\ 
-// * Starts C:\Program Files\Manifold\v9.0\bin64\manifold.exe
+// * Starts C:\Program Files\Manifold\v9.0\manifold.exe
 // * Breakpoints can be used
 
 using System;
